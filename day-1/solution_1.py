@@ -31,9 +31,12 @@ def write_answers(answers, path="./answer.txt"):
             answer_data.write("\n")
 
 
-if __name__ == "__main__":
+def main():
     all_elves_calories = get_all_elves_cal()
     max_total_cal = find_max_total_cal(all_elves_calories)
     top_three_max_total_cal = find_top_three_max_total_cal(all_elves_calories)
     write_answers((max_total_cal, top_three_max_total_cal))
     print(max_total_cal, top_three_max_total_cal)
+
+if __name__ == "__main__":
+    main()
