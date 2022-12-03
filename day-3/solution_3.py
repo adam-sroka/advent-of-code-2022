@@ -45,13 +45,34 @@ def find_duplicate_items(items: str) -> str:
     return duplicates[0]
 
 
+def find_badge_item(group: list) -> str:
+    possible_items = [
+        *PRIORITIES.keys(),
+        *[letter.upper() for letter in PRIORITIES.keys()],
+    ]
+    group_rucksack_items = [set(rucksack) for rucksack in group]
+    for item in possible_items:
+        if all(item in items for items in group_rucksack_items):
+            return item
+    raise ValueError("No badge item found")
+
+
 def read_rucksacks(input_path="./input.txt") -> list:
     with open(input_path, "r") as input_data:
         return [line.strip() for line in input_data]
 
 
+def get_groups(rucksacks: list) -> list:
+    i = iter(rucksacks)
+    return list(zip(i, i, i))
+
+
 def sum_duplicate_item_priorities(rucksacks):
     return sum([get_item_priority(find_duplicate_items(items)) for items in rucksacks])
+
+
+def sum_badge_item_priorities(groups):
+    return sum([get_item_priority(find_badge_item(group)) for group in groups])
 
 
 def write_answers(answers: list, path="./answer.txt") -> None:
@@ -63,9 +84,11 @@ def write_answers(answers: list, path="./answer.txt") -> None:
 
 def main():
     rucksacks = read_rucksacks()
-    priorities_sum = sum_duplicate_item_priorities(rucksacks)
-    write_answers([priorities_sum])
-    print(priorities_sum)
+    duplicate_items_priorities_sum = sum_duplicate_item_priorities(rucksacks)
+    groups = get_groups(rucksacks)
+    badge_items_priorities_sum = sum_badge_item_priorities(groups)
+    write_answers([duplicate_items_priorities_sum, badge_items_priorities_sum])
+    print(duplicate_items_priorities_sum, badge_items_priorities_sum)
 
 
 if __name__ == "__main__":
