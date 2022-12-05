@@ -48,13 +48,17 @@ def read_procedure(input_path=INPUT_PATH) -> list:
     return procedure
 
 
-def execute_procedure(stacks, procedure):
+def execute_procedure(stacks, procedure, old_model=True):
     for step in procedure:
         num_boxes = step[0]
         taking_stack_id = step[1]
         receiving_stack_id = step[2]
-        for _ in range(num_boxes):
-            stacks[receiving_stack_id].append(stacks[taking_stack_id].pop())
+        if old_model:
+            for _ in range(num_boxes):
+                stacks[receiving_stack_id].append(stacks[taking_stack_id].pop())
+        else:
+            stacks[receiving_stack_id].extend(stacks[taking_stack_id][-num_boxes:])
+            stacks[taking_stack_id] = stacks[taking_stack_id][:-num_boxes]
     return stacks
 
 
@@ -75,10 +79,13 @@ def write_answers(answers: list, path="./answer.txt") -> None:
 def main():
     stacks = read_stacks()
     procedure = read_procedure()
-    stacks = execute_procedure(stacks, procedure)
-    top_crates_names = get_top_crates_names(stacks)
-    write_answers([top_crates_names])
-    print(top_crates_names)
+    old_stacks = execute_procedure(stacks, procedure)
+    stacks = read_stacks()  # have to reload as stacks.copy() doesn't make a copy of the lists inside
+    new_stacks = execute_procedure(stacks, procedure, old_model=False)
+    old_top_crates_names = get_top_crates_names(old_stacks)
+    new_top_crates_names = get_top_crates_names(new_stacks)
+    write_answers([old_top_crates_names, new_top_crates_names])
+    print(old_top_crates_names, new_top_crates_names)
 
 
 if __name__ == "__main__":
