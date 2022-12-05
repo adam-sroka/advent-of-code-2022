@@ -7,19 +7,27 @@ def parse_range_pair(line: str) -> list:
     return parsed_ranges
 
 
-def does_range_pair_overlap(range_pair: list, fully=True) -> bool:
+def get_range_pair_boundaries(range_pair: list) -> tuple:
     first_lower, first_upper = range_pair[0][0], range_pair[0][1]
     second_lower, second_upper = range_pair[1][0], range_pair[1][1]
-    if fully:
-        is_first_in_second = first_lower >= second_lower and first_upper <= second_upper
-        is_second_in_first = second_lower >= first_lower and second_upper <= first_upper
-        if is_first_in_second or is_second_in_first:
-            return True
-    else:
-        is_first_lower_in_second = first_lower >= second_lower and first_lower <= second_upper
-        is_second_lower_in_first = second_lower >= first_lower and second_lower <= first_upper
-        if is_first_lower_in_second or is_second_lower_in_first:
-            return True
+    return first_lower, first_upper, second_lower, second_upper
+
+
+def does_range_pair_fully_overlap(range_pair: list) -> bool:
+    first_lower, first_upper, second_lower, second_upper = get_range_pair_boundaries(range_pair)
+    is_first_in_second = first_lower >= second_lower and first_upper <= second_upper
+    is_second_in_first = second_lower >= first_lower and second_upper <= first_upper
+    if is_first_in_second or is_second_in_first:
+        return True
+    return False
+
+
+def does_range_pair_overlap(range_pair: list) -> bool:
+    first_lower, first_upper, second_lower, second_upper = get_range_pair_boundaries(range_pair)
+    is_first_lower_in_second = first_lower >= second_lower and first_lower <= second_upper
+    is_second_lower_in_first = second_lower >= first_lower and second_lower <= first_upper
+    if is_first_lower_in_second or is_second_lower_in_first:
+        return True
     return False
 
 
@@ -29,7 +37,8 @@ def read_range_pairs(input_path="./input.txt") -> list:
 
 
 def count_overlaping_pairs(range_pairs: list, fully=True) -> int:
-    return sum(1 for range_pair in range_pairs if does_range_pair_overlap(range_pair, fully))
+    overlap_check = does_range_pair_fully_overlap if fully else does_range_pair_overlap
+    return sum(map(lambda range_pair : overlap_check(range_pair), range_pairs))
 
 
 def write_answers(answers: list, path="./answer.txt") -> None:
