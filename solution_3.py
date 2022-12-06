@@ -26,6 +26,9 @@ PRIORITIES = {
     "y": 25,
     "z": 26,
 }
+INPUT_PATH = "inputs/input_3.txt"
+
+from utils import utils
 
 
 def get_item_priority(item: str) -> int:
@@ -39,9 +42,7 @@ def find_duplicate_items(items: str) -> str:
     half_length = len(items) // 2
     first_compartment_items = items[:half_length]
     second_compartment_items = items[half_length:]
-    duplicates = list(
-        filter(lambda item: item in first_compartment_items, second_compartment_items)
-    )
+    duplicates = list(filter(lambda item: item in first_compartment_items, second_compartment_items))
     return duplicates[0]
 
 
@@ -57,7 +58,7 @@ def find_badge_item(group: list) -> str:
     raise ValueError("No badge item found")
 
 
-def read_rucksacks(input_path="./input.txt") -> list:
+def read_rucksacks(input_path: str = INPUT_PATH) -> list:
     with open(input_path, "r") as input_data:
         return [line.strip() for line in input_data]
 
@@ -75,19 +76,12 @@ def sum_badge_item_priorities(groups):
     return sum([get_item_priority(find_badge_item(group)) for group in groups])
 
 
-def write_answers(answers: list, path="./answer.txt") -> None:
-    with open(path, "w") as answer_data:
-        for answer in answers:
-            answer_data.write(str(answer))
-            answer_data.write("\n")
-
-
 def main():
     rucksacks = read_rucksacks()
     duplicate_items_priorities_sum = sum_duplicate_item_priorities(rucksacks)
     groups = get_groups(rucksacks)
     badge_items_priorities_sum = sum_badge_item_priorities(groups)
-    write_answers([duplicate_items_priorities_sum, badge_items_priorities_sum])
+    utils.write_answers_to_file(duplicate_items_priorities_sum, badge_items_priorities_sum, file_name="answer_3.txt")
     print(duplicate_items_priorities_sum, badge_items_priorities_sum)
 
 

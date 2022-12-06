@@ -1,10 +1,12 @@
 STACK_WIDTH = 3
 STACK_GAP = 1
 CRATE_START = "["
-INPUT_PATH = "./input.txt"
 NUM_BOXES_INDEX = 1
 TAKING_STACK_INDEX = 3
 RECEIVING_STACK_INDEX = 5
+INPUT_PATH = "inputs/input_5.txt"
+
+from utils import utils
 
 
 def get_stack_number(crate_start_pos: int) -> int:
@@ -19,7 +21,7 @@ def parse_stacks_row(line: str) -> dict:
     return stacks_elements
 
 
-def read_stacks(input_path=INPUT_PATH) -> dict:
+def read_stacks(input_path: str = INPUT_PATH) -> dict:
     stacks = dict()
     with open(input_path, "r") as input_data:
         for line in input_data:
@@ -69,13 +71,6 @@ def get_top_crates_names(stacks):
     return top_crates_names
 
 
-def write_answers(answers: list, path="./answer.txt") -> None:
-    with open(path, "w") as answer_data:
-        for answer in answers:
-            answer_data.write(str(answer))
-            answer_data.write("\n")
-
-
 def main():
     stacks = read_stacks()
     procedure = read_procedure()
@@ -84,7 +79,7 @@ def main():
     new_stacks = execute_procedure(stacks, procedure, old_model=False)
     old_top_crates_names = get_top_crates_names(old_stacks)
     new_top_crates_names = get_top_crates_names(new_stacks)
-    write_answers([old_top_crates_names, new_top_crates_names])
+    utils.write_answers_to_file(old_top_crates_names, new_top_crates_names, file_name="answer_5.txt")
     print(old_top_crates_names, new_top_crates_names)
 
 

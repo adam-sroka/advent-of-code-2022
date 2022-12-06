@@ -1,4 +1,6 @@
-INPUT_PATH = "./input.txt"
+INPUT_PATH = "inputs/input_6.txt"
+
+from utils import utils
 
 
 def find_packet_start_index(data: str, unique_char_num: int = 4) -> int:
@@ -17,18 +19,11 @@ def read_data(input_path: str = INPUT_PATH) -> str:
         return input_data.readlines()[0]
 
 
-def write_answers(answers: list, path: str = "./answer.txt") -> None:
-    with open(path, "w") as answer_data:
-        for answer in answers:
-            answer_data.write(str(answer))
-            answer_data.write("\n")
-
-
 def main():
     data = read_data()
     packet_start_index = find_packet_start_index(data)
     message_start_index = find_message_start_index(data)
-    write_answers([packet_start_index, message_start_index])
+    utils.write_answers_to_file(packet_start_index, message_start_index, file_name="answer_6.txt")
     print(packet_start_index, message_start_index)
 
 

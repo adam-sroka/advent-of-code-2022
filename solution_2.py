@@ -2,6 +2,9 @@ HANDS_CIPHER = dict(A="r", B="p", C="s", X="r", Y="p", Z="s")
 OUTCOME_CIPHER = dict(X="loss", Y="draw", Z="win")
 HAND_SCORES = dict(r=1, p=2, s=3)
 ROUND_SCORES = dict(loss=0, draw=3, win=6)
+INPUT_PATH = "inputs/input_2.txt"
+
+from utils import utils
 
 
 def decrypt_hand(encrypted_hand: str) -> str:
@@ -72,7 +75,7 @@ def parse_encrypted_hands_and_outcomes(line: str) -> tuple:
     return (encrypted_opposing_hand, encrypted_outcome)
 
 
-def decrypt_rounds(input_path="./input.txt") -> list:
+def decrypt_rounds(input_path: str = INPUT_PATH) -> list:
     with open(input_path, "r") as input_data:
         rounds = list()
         for line in input_data:
@@ -84,7 +87,7 @@ def decrypt_rounds(input_path="./input.txt") -> list:
     return rounds
 
 
-def decrypt_opposing_hands_and_outcomes(input_path="./input.txt") -> list:
+def decrypt_opposing_hands_and_outcomes(input_path: str = INPUT_PATH) -> list:
     with open(input_path, "r") as input_data:
         opposing_hands_and_outcomes = list()
         for line in input_data:
@@ -113,20 +116,13 @@ def get_correct_total_score(opposing_hands_and_outcomes: list) -> int:
     return score
 
 
-def write_answers(answers: list, path="./answer.txt") -> None:
-    with open(path, "w") as answer_data:
-        for answer in answers:
-            answer_data.write(str(answer))
-            answer_data.write("\n")
-
-
 def main():
     rounds = decrypt_rounds()
     total_score = get_total_score(rounds)
     opposing_hands_and_outcomes = decrypt_opposing_hands_and_outcomes()
     correct_total_score = get_correct_total_score(opposing_hands_and_outcomes)
+    utils.write_answers_to_file(total_score, correct_total_score, file_name="answer_2.txt")
     print(total_score, correct_total_score)
-    write_answers([total_score, correct_total_score])
 
 
 if __name__ == "__main__":

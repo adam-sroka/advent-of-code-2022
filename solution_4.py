@@ -1,3 +1,8 @@
+INPUT_PATH = "inputs/input_4.txt"
+
+from utils import utils
+
+
 def parse_range_pair(line: str) -> list:
     ranges = line.split(sep=",")
     parsed_ranges = list()
@@ -31,28 +36,21 @@ def does_range_pair_overlap(range_pair: list) -> bool:
     return False
 
 
-def read_range_pairs(input_path="./input.txt") -> list:
+def read_range_pairs(input_path: str = INPUT_PATH) -> list:
     with open(input_path, "r") as input_data:
         return [parse_range_pair(line) for line in input_data]
 
 
 def count_overlaping_pairs(range_pairs: list, fully=True) -> int:
     overlap_check = does_range_pair_fully_overlap if fully else does_range_pair_overlap
-    return sum(map(lambda range_pair : overlap_check(range_pair), range_pairs))
-
-
-def write_answers(answers: list, path="./answer.txt") -> None:
-    with open(path, "w") as answer_data:
-        for answer in answers:
-            answer_data.write(str(answer))
-            answer_data.write("\n")
+    return sum(map(lambda range_pair: overlap_check(range_pair), range_pairs))
 
 
 def main():
     range_pairs = read_range_pairs()
     full_overlaps_num = count_overlaping_pairs(range_pairs)
     partial_overlaps_num = count_overlaping_pairs(range_pairs, fully=False)
-    write_answers([full_overlaps_num, partial_overlaps_num])
+    utils.write_answers_to_file(full_overlaps_num, partial_overlaps_num, file_name="answer_4.txt")
     print(full_overlaps_num, partial_overlaps_num)
 
 
