@@ -1,11 +1,15 @@
 INPUT_PATH = "./input.txt"
 
 
-def find_packet_start_index(data: str) -> int:
+def find_packet_start_index(data: str, unique_char_num=4) -> int:
     for i in range(len(data)):
-        if len(set(data[i : i + 4])) == 4:
-            return i + 4
+        if len(set(data[i : i + unique_char_num])) == unique_char_num:
+            return i + unique_char_num
     return -1
+
+
+def find_message_start_index(data: str) -> int:
+    return find_packet_start_index(data, unique_char_num=14)
 
 
 def read_data(input_path=INPUT_PATH):
@@ -13,10 +17,19 @@ def read_data(input_path=INPUT_PATH):
         return input_data.readlines()[0]
 
 
+def write_answers(answers: list, path="./answer.txt") -> None:
+    with open(path, "w") as answer_data:
+        for answer in answers:
+            answer_data.write(str(answer))
+            answer_data.write("\n")
+
+
 def main():
     data = read_data()
-    start_index = find_packet_start_index(data)
-    print(start_index)
+    packet_start_index = find_packet_start_index(data)
+    message_start_index = find_message_start_index(data)
+    write_answers([packet_start_index, message_start_index])
+    print(packet_start_index, message_start_index)
 
 
 if __name__ == "__main__":
