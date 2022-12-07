@@ -44,15 +44,21 @@ def find_dirs_sizes(input_path: str = INPUT_PATH) -> dict():
     return dirs_sizes
 
 
-def sum_dirs_under_size(dirs_sizes: dict, max_size: int = 100000):
+def sum_dirs_under_size(dirs_sizes: dict, max_size: int = 100000) -> int:
     return sum([dir_size for dir_size in dirs_sizes.values() if dir_size < max_size])
+
+def get_smallest_dir_size_needed_to_reach_free_space(dirs_sizes: dict, total_space: int = 70000000, free_space_needed: int = 30000000) -> int:
+    curr_space = dirs_sizes[tuple("/")]
+    curr_free_space = total_space - curr_space
+    return min([dir_size for dir_size in dirs_sizes.values() if curr_free_space + dir_size > free_space_needed])
 
 
 def main():
     dirs_sizes = find_dirs_sizes()
     dirs_sizes_under_size = sum_dirs_under_size(dirs_sizes)
-    utils.write_answers_to_file(dirs_sizes_under_size, file_name="answer_7.txt")
-    print(dirs_sizes_under_size)
+    smallest_dir_size_needed = get_smallest_dir_size_needed_to_reach_free_space(dirs_sizes)
+    utils.write_answers_to_file(dirs_sizes_under_size, smallest_dir_size_needed, file_name="answer_7.txt")
+    print(dirs_sizes_under_size, smallest_dir_size_needed)
 
 
 if __name__ == "__main__":
