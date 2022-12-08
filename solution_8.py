@@ -24,11 +24,35 @@ def count_visible_trees(trees: np.ndarray) -> int:
     return num_visible
 
 
+def count_seeable_tres(tree_height: int, tree_slice: np.ndarray):
+    seeable = 0
+    for tree in tree_slice:
+        seeable += 1
+        if tree >= tree_height:
+            break
+    return seeable
+
+
+def find_best_scenic_score(trees: np.ndarray) -> int:
+    best_score = 0
+    for i, tree_row in enumerate(trees):
+        for j, tree in enumerate(tree_row):
+            right_seeable = count_seeable_tres(tree, trees[i, j + 1 :])
+            left_seeable = count_seeable_tres(tree, np.flip(trees[i, :j]))
+            bottom_seeable = count_seeable_tres(tree, trees[i + 1 :, j])
+            top_seeable = count_seeable_tres(tree, np.flip(trees[:i, j]))
+            scenic_score = right_seeable * left_seeable * bottom_seeable * top_seeable
+            if scenic_score > best_score:
+                best_score = scenic_score
+    return best_score
+
+
 def main():
     trees = read_trees()
     num_visible = count_visible_trees(trees)
-    utils.write_answers_to_file(num_visible, file_name="answer_8.txt")
-    print(num_visible)
+    best_score = find_best_scenic_score(trees)
+    utils.write_answers_to_file(num_visible, best_score, file_name="answer_8.txt")
+    print(num_visible, best_score)
 
 
 if __name__ == "__main__":

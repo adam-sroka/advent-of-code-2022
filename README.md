@@ -10,4 +10,11 @@ This year I'm finally gonna do it.
 - [x] Day 4
 - [x] Day 5
 - [x] Day 6
-- [ ] Day 7
+- [x] Day 7
+- [x] Day 8
+- [ ] Day 9
+- [ ] Day 10
+- [ ] Day 11
+- [ ] Day 12
+- [ ] Day 13
+- [ ] Day 14
