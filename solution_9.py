@@ -67,14 +67,16 @@ def update_head_pos(curr_head_pos, motion):
         raise (ValueError("Invalid motion"))
 
 
-def get_tail_path(head_motions: list) -> list:
-    head_pos = (0, 0)
-    tail_pos = head_pos
-    tail_path_coords = [tail_pos]
+def get_tail_path(head_motions: list, rope_length: int = 2) -> list:
+    rope_positions = [(0, 0) for _ in range(rope_length)]
+    tail_path_coords = [rope_positions[-1]]
     for motion in head_motions:
-        head_pos = update_head_pos(head_pos, motion)
-        tail_pos = update_tail_pos(head_pos, tail_pos)
-        tail_path_coords.append(tail_pos)
+        for i, pos in enumerate(rope_positions):
+            if i == 0:  # head
+                rope_positions[i] = update_head_pos(pos, motion)
+            else:
+                rope_positions[i] = update_tail_pos(rope_positions[i - 1], pos)
+            tail_path_coords.append(rope_positions[-1])
     return tail_path_coords
 
 
@@ -85,9 +87,11 @@ def get_unique_path_positions(path: list) -> int:
 def main():
     head_motions = read_head_motions()
     tail_path = get_tail_path(head_motions)
+    long_tail_path = get_tail_path(head_motions, rope_length=10)
     unique_tail_positions = get_unique_path_positions(tail_path)
-    print(unique_tail_positions)
-    utils.write_answers_to_file(unique_tail_positions, file_name="answer_9.txt")
+    unique_long_tail_positions = get_unique_path_positions(long_tail_path)
+    utils.write_answers_to_file(unique_tail_positions, unique_long_tail_positions, file_name="answer_9.txt")
+    print(unique_tail_positions, unique_long_tail_positions)
 
 
 if __name__ == "__main__":
