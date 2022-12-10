@@ -23,12 +23,26 @@ def sum_signal_strengths(register_values: list, signal_checks: list = SIGNAL_CHE
     return sum([register_values[i - 1] * i for i in signal_checks])  # i-th check at index i-1
 
 
+def draw_crt(register_values: list) -> str:
+    display = ""
+    crt_width = 40
+    for cycle, value in enumerate(register_values):
+        if cycle % crt_width == 0:
+            display += "\n"
+        if cycle % crt_width in [value, value - 1, value + 1]:
+            display += "#"
+        else:
+            display += "."
+    return display[:-2]  # last two character extra
+
+
 def main():
     program = read_program()
     register_values = find_register_values(program)
+    display = draw_crt(register_values)
     signal_strengths_sum = sum_signal_strengths(register_values)
-    utils.write_answers_to_file(signal_strengths_sum, file_name="answer_10.txt")
-    print(signal_strengths_sum)
+    utils.write_answers_to_file(signal_strengths_sum, display, file_name="answer_10.txt")
+    print(signal_strengths_sum, display)
 
 
 if __name__ == "__main__":
