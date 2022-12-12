@@ -1,4 +1,6 @@
 from typing import List, Tuple, Dict
+from copy import deepcopy
+from math import lcm
 
 INPUT_PATH = "inputs/input_11.txt"
 
@@ -32,8 +34,10 @@ class Monkey:
         elif self.operation[0] == "**":
             return item ** self.operation[1]
 
-    def inspect(self):
+    def inspect(self, modulus=None):
         self.items = [self._operate(item) for item in self.items]
+        if modulus is not None:
+            self.items = [item % modulus for item in self.items]
         self.inspected_num += len(self.items)
 
     def relieve(self):
@@ -91,15 +95,19 @@ class MonkeyInTheMiddle:
             else:
                 raise (ValueError(f"Cannot read monkey input line: {line}!"))
 
-    def play_rounds(self, num_rounds=20):
+    def play_rounds(self, num_rounds=20, relieve=True):
+        if not relieve:
+            lcm_modulus = lcm(*[monkey.div_test_by for monkey in self.monkeys])
         for _ in range(num_rounds):
             for monkey in self.monkeys:
-                monkey.inspect()
-                monkey.relieve()
+                if relieve:
+                    monkey.inspect()
+                    monkey.relieve()
+                else:
+                    monkey.inspect(lcm_modulus)
                 thrown_items = monkey.throw_items()
                 for monkey_id, items in thrown_items.items():
-                    for item in items:  # cannot extend to preserve order
-                        self.monkeys[monkey_id].items.append(item)
+                    self.monkeys[monkey_id].items.extend(reversed(items))
 
     def get_monkey_business_level(self):
         top_two_inspects = sorted([monkey.inspected_num for monkey in self.monkeys], reverse=True)[:2]
@@ -109,9 +117,13 @@ class MonkeyInTheMiddle:
 def main():
     monkey_game = MonkeyInTheMiddle()
     monkey_game.read_monkeys()
+    another_monkey_game = deepcopy(monkey_game)
     monkey_game.play_rounds()
     monkey_business_level = monkey_game.get_monkey_business_level()
-    print(monkey_business_level)
+    another_monkey_game.play_rounds(num_rounds=10000, relieve=False)
+    not_relieved_monkey_business_level = another_monkey_game.get_monkey_business_level()
+    utils.write_answers_to_file(monkey_business_level, not_relieved_monkey_business_level, file_name="answer_11.txt")
+    print(monkey_business_level, not_relieved_monkey_business_level)
 
 
 if __name__ == "__main__":
