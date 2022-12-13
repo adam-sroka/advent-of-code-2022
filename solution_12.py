@@ -1,6 +1,7 @@
 from collections import deque
 import numpy as np
 from utils import utils
+from tqdm import tqdm
 
 
 INPUT_PATH = "inputs/input_12.txt"
@@ -60,6 +61,7 @@ class HeightMap:
         self.height_map = {}
         self.start_pos = None
         self.end_pos = None
+        self.low_poss = []
 
     def load_raw_heights(self, input_path=INPUT_PATH):
         with open(input_path) as input_data:
@@ -79,6 +81,8 @@ class HeightMap:
                 elif height == 27:
                     self.end_pos = (j, i)
                     correction = -1
+                elif height == 1:
+                    self.low_poss.append((j, i))
                 reachable_nodes = []
                 real_height = height + correction
                 if i - 1 >= 0 and heights[j, i - 1] <= real_height + 1:
@@ -91,9 +95,12 @@ class HeightMap:
                     reachable_nodes.append((j + 1, i))
                 self.height_map[(j, i)] = reachable_nodes
 
-    def find_shortest_path_distance(self):  # bfs
+    def find_shortest_path_distance(self, start_pos=None):  # bfs
         to_search = deque()
-        to_search.append((0, self.start_pos))
+        if start_pos == None:
+            to_search.append((0, self.start_pos))
+        else:
+            to_search.append((0, start_pos))
         searched = []
         while to_search:
             distance, node = to_search.popleft()
@@ -104,6 +111,15 @@ class HeightMap:
                     for neighbour in self.height_map[node]:
                         to_search.append((distance + 1, neighbour))
                     searched.append(node)
+        return -1
+
+    def find_best_shortest_path(self):  # yolo, can't bother reversing the search from top to bottom
+        shortest = float("inf")
+        for pos in tqdm(self.low_poss):
+            distance = self.find_shortest_path_distance(pos)
+            if distance > 0:
+                shortest = min(shortest, distance)
+        return shortest
 
 
 def main():
@@ -111,8 +127,9 @@ def main():
     terrain.load_raw_heights()
     terrain.decode_raw_heights()
     distance = terrain.find_shortest_path_distance()
-    utils.write_answers_to_file(distance, file_name="answer_12.txt")
-    print(distance)
+    shortest_distance = terrain.find_best_shortest_path()
+    utils.write_answers_to_file(distance, shortest_distance, file_name="answer_12.txt")
+    print(distance, shortest_distance)
 
 
 if __name__ == "__main__":
